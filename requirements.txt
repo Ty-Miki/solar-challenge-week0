@@ -22,6 +22,7 @@ h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1
 idna==3.10
+iniconfig==2.1.0
 ipykernel==6.29.5
 ipython==9.2.0
 ipython_pygments_lexers==1.1.1
@@ -62,6 +63,7 @@ pandocfilters==1.5.1
 parso==0.8.4
 pexpect==4.9.0
 platformdirs==4.3.8
+pluggy==1.6.0
 prometheus_client==0.21.1
 prompt_toolkit==3.0.51
 psutil==7.0.0
@@ -69,6 +71,7 @@ ptyprocess==0.7.0
 pure_eval==0.2.3
 pycparser==2.22
 Pygments==2.19.1
+pytest==8.3.5
 python-dateutil==2.9.0.post0
 python-json-logger==3.3.0
 pytz==2025.2
@@ -79,6 +82,7 @@ requests==2.32.3
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rpds-py==0.24.0
+scipy==1.15.3
 Send2Trash==1.8.3
 setuptools==80.7.1
 six==1.17.0

@@ -2,21 +2,9 @@ import pandas as pd
 import logging
 import os
 
-# Setup logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Create console handler
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-
-# Format logs
-formatter = logging.Formatter('%(asctime)s — %(levelname)s — %(message)s')
-console_handler.setFormatter(formatter)
-
-# Add handler only once to prevent duplicates in Jupyter
-if not logger.hasHandlers():
-    logger.addHandler(console_handler)
 
 def load_csv(filepath):
     """
@@ -29,13 +17,13 @@ def load_csv(filepath):
         pd.DataFrame or None
     """
     if not os.path.exists(filepath):
-        logger.error(f"File does not exist: {filepath}")
+        logging.error(f"File does not exist: {filepath}")
         return None
 
     try:
         df = pd.read_csv(filepath, parse_dates=True)
-        logger.info(f"✅ Successfully loaded data from {filepath} with shape {df.shape}")
+        logging.info(f"Successfully loaded data from {filepath} with shape {df.shape}")
         return df
     except Exception as e:
-        logger.exception(f"❌ Failed to load data from {filepath}")
+        logging.exception(f"Failed to load data from {filepath}")
         return None
