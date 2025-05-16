@@ -82,7 +82,7 @@ def test_plot_wind_rose(plot_gen, sample_df, monkeypatch):
     df['wind_direction'] = np.random.randint(0, 360, size=len(df))
     df['wind_speed'] = np.random.rand(len(df)) * 10
     plot_gen.plot_wind_rose(df, 'wind_direction', 'wind_speed')
-    
+
 def test_plot_wind_rose_invalid_column(plot_gen, monkeypatch, sample_df):
     monkeypatch.setattr(plt, "show", lambda: None)
     # Add wind direction and speed columns
@@ -90,3 +90,17 @@ def test_plot_wind_rose_invalid_column(plot_gen, monkeypatch, sample_df):
     df['wind_direction'] = np.random.randint(0, 360, size=len(df))
     df['wind_speed'] = np.random.rand(len(df)) * 10
     plot_gen.plot_wind_rose(df, 'invalid_column', 'wind_speed')
+
+def test_plot_bubble_chart(plot_gen, sample_df, monkeypatch):
+    monkeypatch.setattr(plt, "show", lambda: None)
+    # Add a size column
+    df = sample_df.copy()
+    df['size'] = np.random.rand(len(df)) * 100
+    plot_gen.plot_bubble_chart(df, x_col='A', y_col='B', size_col='size')
+
+def test_plot_bubble_chart_invalid_column(plot_gen, monkeypatch, sample_df):
+    monkeypatch.setattr(plt, "show", lambda: None)
+    # Add a size column
+    df = sample_df.copy()
+    df['size'] = np.random.rand(len(df)) * 100
+    plot_gen.plot_bubble_chart(df, x_col='A', y_col='nonexistent_column', size_col='size')

@@ -226,3 +226,37 @@ class PlotGenerator:
 
         except Exception as e:
             logging.error(f"Error generating wind rose plot for {ws_col} and {wd_col}: {e}")
+
+    def plot_bubble_chart(self, df: pd.DataFrame, x_col: str, y_col: str, size_col: str):
+        """
+        Plots a bubble chart using the specified columns.
+        
+        Parameters:
+            df (pd.DataFrame): The input DataFrame containing the data.
+            x_col (str): Column name for the X-axis.
+            y_col (str): Column name for the Y-axis.
+            size_col (str): Column name to represent bubble size.
+        """
+        try:
+            plt.figure(figsize=(10, 6))
+            scatter = plt.scatter(
+                df[x_col],
+                df[y_col],
+                s=df[size_col],  # Bubble size
+                alpha=0.6,
+                edgecolors='w',
+                linewidth=0.5,
+                c=df[size_col],
+                cmap='viridis'
+            )
+            plt.colorbar(scatter, label=size_col)
+            plt.xlabel(x_col)
+            plt.ylabel(y_col)
+            plt.title(f'Bubble Chart: {y_col} vs {x_col} (Bubble Size: {size_col})')
+            plt.grid(True)
+            plt.tight_layout()
+            logging.info(f"Bubble chart for {x_col}, {y_col}, {size_col} created successfully.")
+            plt.show()
+        
+        except Exception as e:
+            logging.error(f"Error generating bubble chart for {x_col}, {y_col}, {size_col}: {e}")
