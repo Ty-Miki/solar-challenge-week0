@@ -148,3 +148,25 @@ class PlotGenerator:
         plt.tight_layout()
         plt.show()
 
+    def plot_correlation_heatmap(self, df: pd.DataFrame, columns: List[str], annot=True, cmap="coolwarm"):
+        """
+        Plots a heatmap showing pairwise correlation coefficients between the specified columns.
+        
+        Parameters:
+            df (pd.DataFrame): The input DataFrame containing the data.
+            columns (List[str]): List of column names to include in the correlation matrix.
+            annot (bool): Whether to annotate the heatmap with correlation values. Default is True.
+            cmap (str): The color map style to use. Default is "coolwarm".
+        """
+        try:
+            corr_matrix = df[columns].corr()
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(corr_matrix, annot=annot, cmap=cmap, fmt=".2f", square=True, linewidths=0.5)
+            plt.title("Correlation Heatmap")
+            logging.info("Correlation heatmap created successfully.")
+            plt.tight_layout()
+            plt.show()
+        except Exception as e:
+            logging.error(f"Error generating correlation heatmap: {e}")
+
+

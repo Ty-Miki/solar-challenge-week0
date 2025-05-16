@@ -52,3 +52,24 @@ def test_plot_box_invalid_column(plot_gen, sample_df, monkeypatch):
     monkeypatch.setattr(plt, "show", lambda: None)
     # Should not raise, but log error
     plot_gen.plot_box(sample_df, 'invalid_column')
+
+def test_plot_box_grouped(plot_gen, sample_df, monkeypatch):
+    import matplotlib.pyplot as plt
+    monkeypatch.setattr(plt, "show", lambda: None)
+    # Add a group column
+    df = sample_df.copy()
+    df['group'] = np.random.choice([0, 1], size=len(df))
+    plot_gen.plot_box_grouped(df, ['A', 'B'], group_column='group')
+
+def test_plot_time_series_grouped(plot_gen, sample_df, monkeypatch):
+    import matplotlib.pyplot as plt
+    monkeypatch.setattr(plt, "show", lambda: None)
+    # Add a group column
+    df = sample_df.copy()
+    df['group'] = np.random.choice([0, 1], size=len(df))
+    plot_gen.plot_time_series_grouped(df, ['A', 'B'], time_column='time', group_column='group')
+
+def test_plot_correlation_heatmap(plot_gen, sample_df, monkeypatch):
+    import matplotlib.pyplot as plt
+    monkeypatch.setattr(plt, "show", lambda: None)
+    plot_gen.plot_correlation_heatmap(sample_df, ['A', 'B'])
