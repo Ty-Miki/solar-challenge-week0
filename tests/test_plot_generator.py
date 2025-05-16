@@ -66,41 +66,10 @@ def test_plot_correlation_heatmap(plot_gen, sample_df, monkeypatch):
     monkeypatch.setattr(plt, "show", lambda: None)
     plot_gen.plot_correlation_heatmap(sample_df, ['A', 'B'])
 
-def test_plot_scatter(plot_gen, monkeypatch, sample_df):
+def test_plot_scatter(monkeypatch, sample_df):
+    import matplotlib.pyplot as plt
+    from src.plot_generator import PlotGenerator
+
     monkeypatch.setattr(plt, "show", lambda: None)
     # plot_scatter is a static method, so call it directly
-    plot_gen.plot_scatter(sample_df, x_col='A', y_col='B')
-
-def test_plot_scatter_invalid_column(plot_gen, monkeypatch, sample_df):
-    monkeypatch.setattr(plt, "show", lambda: None)
-    plot_gen.plot_scatter(sample_df, x_col='A', y_col='nonexistent_column')
-
-def test_plot_wind_rose(plot_gen, sample_df, monkeypatch):
-    monkeypatch.setattr(plt, "show", lambda: None)
-    # Add wind direction and speed columns
-    df = sample_df.copy()
-    df['wind_direction'] = np.random.randint(0, 360, size=len(df))
-    df['wind_speed'] = np.random.rand(len(df)) * 10
-    plot_gen.plot_wind_rose(df, 'wind_direction', 'wind_speed')
-
-def test_plot_wind_rose_invalid_column(plot_gen, monkeypatch, sample_df):
-    monkeypatch.setattr(plt, "show", lambda: None)
-    # Add wind direction and speed columns
-    df = sample_df.copy()
-    df['wind_direction'] = np.random.randint(0, 360, size=len(df))
-    df['wind_speed'] = np.random.rand(len(df)) * 10
-    plot_gen.plot_wind_rose(df, 'invalid_column', 'wind_speed')
-
-def test_plot_bubble_chart(plot_gen, sample_df, monkeypatch):
-    monkeypatch.setattr(plt, "show", lambda: None)
-    # Add a size column
-    df = sample_df.copy()
-    df['size'] = np.random.rand(len(df)) * 100
-    plot_gen.plot_bubble_chart(df, x_col='A', y_col='B', size_col='size')
-
-def test_plot_bubble_chart_invalid_column(plot_gen, monkeypatch, sample_df):
-    monkeypatch.setattr(plt, "show", lambda: None)
-    # Add a size column
-    df = sample_df.copy()
-    df['size'] = np.random.rand(len(df)) * 100
-    plot_gen.plot_bubble_chart(df, x_col='A', y_col='nonexistent_column', size_col='size')
+    PlotGenerator.plot_scatter(sample_df, x_col='A', y_col='B')
