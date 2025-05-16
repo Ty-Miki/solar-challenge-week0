@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
+from windrose import WindroseAxes
 import logging
-import os
 from typing import Union, List
 
 # Set up logging
@@ -193,3 +193,36 @@ class PlotGenerator:
             logging.error(f"Error generating scatter plot for {y_col} vs {x_col}: {e}")
 
 
+    def plot_wind_rose(self, df: pd.DataFrame, ws_col: str, wd_col: str, bins=None, calm_threshold=0.5):
+        """
+        Plots a wind rose showing wind direction and wind speed distribution.
+        
+        Parameters:
+            df (pd.DataFrame): The input DataFrame.
+            ws_col (str): Column name for wind speed.
+            wd_col (str): Column name for wind direction.
+            bins (list or None): Optional bins for wind speed categories. Defaults to automatic.
+            calm_threshold (float): Speeds below this are considered calm and excluded. Default is 0.5 m/s.
+        """
+        try:
+            # Drop NaNs and filter calm winds
+            df_clean = df[[ws_col, wd_col]].dropna()
+            df_clean = df_clean[df_clean[ws_col] >= calm_threshold]
+            
+            if df_clean.empty:
+                logging.warning("No valid data points above calm threshold for wind rose.")
+                return
+            
+            ws = df_clean[ws_col].values
+            wd = df_clean[wd_col].values
+
+            # Create windrose axis
+            ax = WindroseAxes.from_ax()
+            ax.bar(wd, ws, normed=True, opening=0.8, edgecolor='white', bins=bins)
+            ax.set_legend()
+            plt.title(f'Wind Rose: {ws_col} vs {wd_col}')
+            logging.info(f"Wind rose plot for {ws_col} vs {wd_col} created successfully.")
+            plt.show()
+
+        except Exception as e:
+            logging.error(f"Error generating wind rose plot for {ws_col} and {wd_col}: {e}")
