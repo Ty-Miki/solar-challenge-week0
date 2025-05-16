@@ -98,3 +98,53 @@ class PlotGenerator:
         plt.xlabel(time_column)
         plt.tight_layout()
         plt.show()
+
+    def plot_box_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], group_column: str):
+        """
+        Generates grouped boxplots for the specified columns by a categorical group.
+        Parameters:
+            df (pd.DataFrame): Input data.
+            columns (str or list): Columns to plot.
+            group_column (str): Categorical column to group by (e.g., 'Cleaning').
+        """
+        columns = [columns] if isinstance(columns, str) else columns
+        n = len(columns)
+        fig, axes = plt.subplots(1, n, figsize=(6 * n, 4))
+        axes = axes if isinstance(axes, np.ndarray) else [axes]
+
+        for ax, col in zip(axes, columns):
+            try:
+                sns.boxplot(x=df[group_column], y=df[col], ax=ax)
+                ax.set_title(f'{col} by {group_column}')
+                logging.info(f"Grouped boxplot for {col} created successfully.")
+            except Exception as e:
+                logging.error(f"Error generating grouped boxplot for {col}: {e}")
+        
+        plt.tight_layout()
+        plt.show()
+
+    def plot_time_series_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], time_column: str, group_column: str):
+        """
+        Plots time series lines for each group in group_column for the specified columns.
+        Parameters:
+            df (pd.DataFrame): Input data.
+            columns (str or list): Columns to plot.
+            time_column (str): Time column (e.g., 'Timestamp').
+            group_column (str): Grouping column (e.g., 'Cleaning').
+        """
+        columns = [columns] if isinstance(columns, str) else columns
+        n = len(columns)
+        fig, axes = plt.subplots(n, 1, figsize=(10, 4 * n), sharex=True)
+        axes = axes if isinstance(axes, np.ndarray) else [axes]
+
+        for ax, col in zip(axes, columns):
+            try:
+                sns.lineplot(data=df, x=time_column, y=col, hue=group_column, ax=ax)
+                ax.set_title(f'{col} over Time by {group_column}')
+                logging.info(f"Grouped time series plot for {col} created successfully.")
+            except Exception as e:
+                logging.error(f"Error generating grouped time series plot for {col}: {e}")
+        
+        plt.tight_layout()
+        plt.show()
+
