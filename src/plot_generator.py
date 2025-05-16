@@ -169,4 +169,27 @@ class PlotGenerator:
         except Exception as e:
             logging.error(f"Error generating correlation heatmap: {e}")
 
+    def plot_scatter(self, df: pd.DataFrame, x_col: str, y_col: str):
+        """
+        Displays a scatter plot of two specified columns.
+
+        Parameters:
+        - df (pd.DataFrame): DataFrame containing the data
+        - x_col (str): Column name for x-axis
+        - y_col (str): Column name for y-axis
+        """
+        try:
+            plt.figure(figsize=(8, 6))
+            sns.scatterplot(data=df, x=x_col, y=y_col, s=30, color='teal', edgecolor='white', alpha=0.7)
+            
+            plt.title(f'Scatter Plot: {y_col} vs {x_col}', fontsize=14)
+            plt.xlabel(x_col, fontsize=12)
+            plt.ylabel(y_col, fontsize=12)
+            plt.grid(True, linestyle='--', alpha=0.5)
+            logging.info(f"{y_col} vs {x_col} scatter plot created successfully.")
+            plt.tight_layout()
+            plt.show()
+        except Exception as e:
+            logging.error(f"Error generating scatter plot for {y_col} vs {x_col}: {e}")
+
 
