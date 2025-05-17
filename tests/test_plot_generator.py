@@ -66,10 +66,6 @@ def test_plot_correlation_heatmap(plot_gen, sample_df, monkeypatch):
     monkeypatch.setattr(plt, "show", lambda: None)
     plot_gen.plot_correlation_heatmap(sample_df, ['A', 'B'])
 
-def test_plot_scatter(monkeypatch, sample_df):
-    import matplotlib.pyplot as plt
-    from src.plot_generator import PlotGenerator
-
+def test_plot_scatter(plot_gen, sample_df, monkeypatch):
     monkeypatch.setattr(plt, "show", lambda: None)
-    # plot_scatter is a static method, so call it directly
-    PlotGenerator.plot_scatter(sample_df, x_col='A', y_col='B')
+    plot_gen.plot_scatter(sample_df, x_col='A', y_col='B')
