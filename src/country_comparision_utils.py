@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+from typing import Dict, List
 import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -43,3 +43,62 @@ class ComparisionUtils:
         except Exception as e:
             logging.error(f"Error combining country data: {e}")
             raise
+    
+    def generate_summary_stats(self, df: pd.DataFrame, 
+                               metrics: List[str] = ["GHI", "DNI", "DHI"], 
+                               stats: List[str] = ["mean", "median", "std"],
+                               country_col: str = "country") -> pd.DataFrame:
+        """
+        Generates a summary table comparing statistical measures across countries.
+        Logs errors gracefully and validates inputs.
+
+        Args:
+            df: Combined DataFrame (from `combine_country_data`).
+            metrics: Columns to analyze (default: ["GHI", "DNI", "DHI"]).
+            stats: Aggregation functions (default: ["mean", "median", "std"]).
+            country_col: Name of the country column (default: "country").
+
+        Returns:
+            pd.DataFrame: Summary table with countries as rows and metrics/stats as columns.
+
+        Raises:
+            ValueError: If required columns are missing or inputs are invalid.
+        """
+        try:
+            # Validate inputs
+            if not isinstance(df, pd.DataFrame):
+                raise ValueError("Input must be a pandas DataFrame")
+            if df.empty:
+                raise ValueError("DataFrame is empty")
+            if country_col not in df.columns:
+                raise ValueError(f"Country column '{country_col}' not found in DataFrame")
+            
+            # Check if specified metrics exist
+            missing_metrics = [m for m in metrics if m not in df.columns]
+            if missing_metrics:
+                raise ValueError(f"Metrics not found in DataFrame: {missing_metrics}")
+
+            # Log start of operation
+            logging.info(
+                f"Generating summary stats for metrics: {metrics} "
+                f"using aggregations: {stats}"
+            )
+
+            # Compute stats
+            summary = (
+                df.groupby(country_col)[metrics]
+                .agg(stats)
+                .round(2)
+            )
+            
+            # Flatten multi-index columns
+            summary.columns = [f"{metric}_{stat}" for metric, stat in summary.columns]
+            summary = summary.reset_index()
+
+            logging.info("Successfully generated summary stats")
+            return summary
+
+        except ValueError as e:
+            logging.error(f"Input validation error: {e}")
+        except Exception as e:
+            logging.error(f"Unexpected error generating summary stats: {e}")
