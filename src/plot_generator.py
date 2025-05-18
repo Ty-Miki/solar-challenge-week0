@@ -126,13 +126,16 @@ class PlotGenerator:
                 elif isinstance(color, (str, list)):
                     palette = color   # Use specified color(s)
                 else:
-                    palette = None     # Default behavior
+                    palette = None    # Default behavior
 
                 sns.boxplot(
-                    x=df[group_column], 
-                    y=df[col], 
-                    ax=ax, 
-                    palette=palette  # Pass palette to boxplot
+                    x=group_column,       # Column name (not df[group_column])
+                    y=col,               # Column name (not df[col])
+                    data=df,             # Pass DataFrame here
+                    hue=group_column,    # Required for palette
+                    palette=palette,      # Now works correctly
+                    legend=False,        # Avoid duplicate legend
+                    ax=ax,
                 )
                 ax.set_title(f'{col} by {group_column}')
                 logging.info(f"Grouped boxplot for {col} created successfully.")
