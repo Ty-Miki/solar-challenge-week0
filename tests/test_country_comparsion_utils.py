@@ -64,3 +64,86 @@ def test_mixed_column_structure(comparison_utils):
     # Check missing column (Area) is filled with NaN for Japan
     assert "Area" in combined_df.columns
     assert combined_df["Area"].isna().sum() == 1  # Japan's row has NaN
+
+@pytest.fixture
+def sample_combined_data():
+    """Sample DataFrame with country, GHI, DNI, DHI columns."""
+    return pd.DataFrame({
+        "country": ["Germany", "Germany", "Spain", "Spain"],
+        "GHI": [450, 460, 520, 530],
+        "DNI": [320, 330, 380, 390],
+        "DHI": [130, 140, 140, 150]
+    })
+
+def test_successful_summary_stats(sample_combined_data):
+    """Test successful generation of summary stats."""
+    utils = ComparisionUtils()
+    summary = utils.generate_summary_stats(sample_combined_data)
+    
+    # Check structure
+    assert isinstance(summary, pd.DataFrame)
+    assert set(summary.columns) == {
+        "country", "GHI_mean", "GHI_median", "GHI_std",
+        "DNI_mean", "DNI_median", "DNI_std",
+        "DHI_mean", "DHI_median", "DHI_std"
+    }
+    
+    # Check values (Germany stats)
+    germany = summary[summary["country"] == "Germany"].iloc[0]
+    assert germany["GHI_mean"] == pytest.approx(455.0)
+    assert germany["DNI_std"] == pytest.approx(7.07, abs=0.01)
+
+def test_custom_metrics_and_stats(sample_combined_data):
+    """Test with custom metrics and stats."""
+    utils = ComparisionUtils()
+    summary = utils.generate_summary_stats(
+        sample_combined_data,
+        metrics=["GHI", "DHI"],
+        stats=["mean", "max"]
+    )
+    assert set(summary.columns) == {
+        "country", "GHI_mean", "GHI_max", "DHI_mean", "DHI_max"
+    }
+
+def test_missing_metrics(caplog, sample_combined_data):
+    """Test logging when metrics are missing (no exception raised)."""
+    utils = ComparisionUtils()
+    with caplog.at_level(logging.ERROR):
+        result = utils.generate_summary_stats(
+            sample_combined_data, 
+            metrics=["GHI", "INVALID"]
+        )
+    
+    # Check that the method logged an error and returned None (or a default DataFrame)
+    assert "Metrics not found in DataFrame: ['INVALID']" in caplog.text
+    assert result is None  # Or assert isinstance(result, pd.DataFrame) if you return a default
+
+def test_empty_dataframe(caplog):
+    """Test logging when DataFrame is empty (no exception raised)."""
+    utils = ComparisionUtils()
+    with caplog.at_level(logging.ERROR):
+        result = utils.generate_summary_stats(pd.DataFrame())
+    
+    assert "DataFrame is empty" in caplog.text
+    assert result is None  # Or adjust based on your method's return
+
+def test_invalid_country_column(caplog, sample_combined_data):
+    """Test logging when country column is missing (no exception raised)."""
+    utils = ComparisionUtils()
+    with caplog.at_level(logging.ERROR):
+        result = utils.generate_summary_stats(
+            sample_combined_data, 
+            country_col="missing_col"
+        )
+    
+    assert "Country column 'missing_col' not found in DataFrame" in caplog.text
+    assert result is None
+
+def test_non_dataframe_input(caplog):
+    """Test logging when input is not a DataFrame (no exception raised)."""
+    utils = ComparisionUtils()
+    with caplog.at_level(logging.ERROR):
+        result = utils.generate_summary_stats({"not_a_df": 123})
+    
+    assert "Input must be a pandas DataFrame" in caplog.text
+    assert result is None
