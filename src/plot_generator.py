@@ -99,13 +99,19 @@ class PlotGenerator:
         plt.tight_layout()
         plt.show()
 
-    def plot_box_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], group_column: str):
+    def plot_box_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], group_column: str,
+        color: Union[str, List[str], bool] = None  # New parameter
+    ):
         """
         Generates grouped boxplots for the specified columns by a categorical group.
+        
         Parameters:
             df (pd.DataFrame): Input data.
             columns (str or list): Columns to plot.
             group_column (str): Categorical column to group by (e.g., 'Cleaning').
+            color (str, list, or bool): Color for boxes. If None, uses default palette.
+                                        If True, uses a qualitative palette.
+                                        If str/list, uses specified color(s).
         """
         columns = [columns] if isinstance(columns, str) else columns
         n = len(columns)
@@ -114,7 +120,20 @@ class PlotGenerator:
 
         for ax, col in zip(axes, columns):
             try:
-                sns.boxplot(x=df[group_column], y=df[col], ax=ax)
+                # Handle color logic
+                if color is True:
+                    palette = "husl"  # Use a qualitative palette
+                elif isinstance(color, (str, list)):
+                    palette = color   # Use specified color(s)
+                else:
+                    palette = None     # Default behavior
+
+                sns.boxplot(
+                    x=df[group_column], 
+                    y=df[col], 
+                    ax=ax, 
+                    palette=palette  # Pass palette to boxplot
+                )
                 ax.set_title(f'{col} by {group_column}')
                 logging.info(f"Grouped boxplot for {col} created successfully.")
             except Exception as e:
