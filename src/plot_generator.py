@@ -19,6 +19,12 @@ class PlotGenerator:
         plot_box(df: pd.DataFrame, columns: Union[str, List[str]]):
         plot_histogram(df: pd.DataFrame, columns: Union[str, List[str]], bins=30):
         plot_time_series(df: pd.DataFrame, columns: Union[str, List[str]], time_column: str):
+        plot_box_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], group_column: str, color: Union[str, List[str], bool] = None):
+        plot_time_series_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], time_column: str, group_column: str):
+        plot_correlation_heatmap(self, df: pd.DataFrame, columns: List[str], annot=True, cmap="coolwarm"):
+        plot_scatter(self, df: pd.DataFrame, x_col: str, y_col: str):
+        plot_wind_rose(self, df: pd.DataFrame, ws_col: str, wd_col: str, bins=None, calm_threshold=0.5):
+        plot_bubble_chart(self, df: pd.DataFrame, x_col: str, y_col: str, size_col: str):
     """
    
     def __init__(self):
@@ -99,13 +105,19 @@ class PlotGenerator:
         plt.tight_layout()
         plt.show()
 
-    def plot_box_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], group_column: str):
+    def plot_box_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], group_column: str,
+        color: Union[str, List[str], bool] = None  # New parameter
+    ):
         """
         Generates grouped boxplots for the specified columns by a categorical group.
+        
         Parameters:
             df (pd.DataFrame): Input data.
             columns (str or list): Columns to plot.
             group_column (str): Categorical column to group by (e.g., 'Cleaning').
+            color (str, list, or bool): Color for boxes. If None, uses default palette.
+                                        If True, uses a qualitative palette.
+                                        If str/list, uses specified color(s).
         """
         columns = [columns] if isinstance(columns, str) else columns
         n = len(columns)
@@ -114,7 +126,23 @@ class PlotGenerator:
 
         for ax, col in zip(axes, columns):
             try:
-                sns.boxplot(x=df[group_column], y=df[col], ax=ax)
+                # Handle color logic
+                if color is True:
+                    palette = "husl"  # Use a qualitative palette
+                elif isinstance(color, (str, list)):
+                    palette = color   # Use specified color(s)
+                else:
+                    palette = None    # Default behavior
+
+                sns.boxplot(
+                    x=group_column,       # Column name (not df[group_column])
+                    y=col,               # Column name (not df[col])
+                    data=df,             # Pass DataFrame here
+                    hue=group_column,    # Required for palette
+                    palette=palette,      # Now works correctly
+                    legend=False,        # Avoid duplicate legend
+                    ax=ax,
+                )
                 ax.set_title(f'{col} by {group_column}')
                 logging.info(f"Grouped boxplot for {col} created successfully.")
             except Exception as e:
