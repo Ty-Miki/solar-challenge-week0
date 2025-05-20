@@ -19,6 +19,12 @@ class PlotGenerator:
         plot_box(df: pd.DataFrame, columns: Union[str, List[str]]):
         plot_histogram(df: pd.DataFrame, columns: Union[str, List[str]], bins=30):
         plot_time_series(df: pd.DataFrame, columns: Union[str, List[str]], time_column: str):
+        plot_box_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], group_column: str, color: Union[str, List[str], bool] = None):
+        plot_time_series_grouped(self, df: pd.DataFrame, columns: Union[str, List[str]], time_column: str, group_column: str):
+        plot_correlation_heatmap(self, df: pd.DataFrame, columns: List[str], annot=True, cmap="coolwarm"):
+        plot_scatter(self, df: pd.DataFrame, x_col: str, y_col: str):
+        plot_wind_rose(self, df: pd.DataFrame, ws_col: str, wd_col: str, bins=None, calm_threshold=0.5):
+        plot_bubble_chart(self, df: pd.DataFrame, x_col: str, y_col: str, size_col: str):
     """
    
     def __init__(self):

@@ -1,6 +1,7 @@
 import logging
-from typing import Dict, List
+from typing import Dict, List, Optional
 import pandas as pd
+from scipy.stats import f_oneway
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -102,3 +103,25 @@ class ComparisionUtils:
             logging.error(f"Input validation error: {e}")
         except Exception as e:
             logging.error(f"Unexpected error generating summary stats: {e}")
+
+    def perform_anova(self, df: pd.DataFrame, group_col: str, value_col: str, interpret: bool = False):
+        """
+        Performs one-way ANOVA to test if means of 'value_col' differ significantly between groups in 'group_col'.
+
+        Parameters:
+            df (pd.DataFrame): The input DataFrame.
+            group_col (str): The name of the column with categorical groups (e.g., 'Country').
+            value_col (str): The name of the numeric column to compare (e.g., 'GHI').
+
+        Returns:
+            tuple: F-statistic and p-value of the ANOVA test.
+        """
+        try:
+            groups = [group[value_col].dropna() for _, group in df.groupby(group_col)]
+            f_stat, p_value = f_oneway(*groups)
+            logging.info(f"ANOVA test performed on '{value_col}' grouped by '{group_col}'.")
+
+            return f_stat, p_value
+        except Exception as e:
+            logging.error(f"ANOVA test failed: {e}")
+            return None, None
