@@ -121,6 +121,12 @@ class ComparisionUtils:
             f_stat, p_value = f_oneway(*groups)
             logging.info(f"ANOVA test performed on '{value_col}' grouped by '{group_col}'.")
 
+            if interpret:
+                if p_value < 0.05:
+                    print(f"Significant differences detected in '{value_col}' between groups in '{group_col}'.")
+                else:
+                    print(f"No significant differences found in '{value_col}' between groups in '{group_col}'.")
+                    
             return f_stat, p_value
         except Exception as e:
             logging.error(f"ANOVA test failed: {e}")
