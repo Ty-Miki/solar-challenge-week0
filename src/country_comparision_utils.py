@@ -1,7 +1,9 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List
 import pandas as pd
 from scipy.stats import f_oneway
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -131,3 +133,25 @@ class ComparisionUtils:
         except Exception as e:
             logging.error(f"ANOVA test failed: {e}")
             return None, None
+        
+    def plot_avg_value_by_country(self, df: pd.DataFrame, country_col: str ='country', value_col: str ='GHI'):
+        """
+        Plots a bar chart ranking countries by their average values.
+        
+        Parameters:
+            df (pd.DataFrame): DataFrame containing data.
+            country_col (str): Name of the column with country names. Default is 'country'.
+            value_col (str): Name of the Value column. Default is 'GHI'.
+        """
+        try:
+            avg_ghi = df.groupby(country_col)[value_col].mean().sort_values(ascending=False)
+            plt.figure(figsize=(10, 6))
+            sns.barplot(x=avg_ghi.index, y=avg_ghi.values, palette='viridis')
+            plt.xlabel('Country')
+            plt.ylabel(f'Average {value_col}')
+            plt.title(f'Average {value_col} by Country')
+            plt.tight_layout()
+            plt.show()
+            logging.info(f"Average {value_col} bar chart created successfully.")
+        except Exception as e:
+            logging.error(f"Error generating average {value_col} chart: {e}")
