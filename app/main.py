@@ -29,7 +29,7 @@ if combined_df is not None:
         
         st.subheader("📋 Conclusion")
         st.write("""The summary table shows Benin exhibits a significantly higher mean GHI and DNI which shows the place gets the highest amount of sun irradiance.
-                 One the other hand""")
+                 One the other hand Sierra Leone shows the highest amount of GHI which indicates most irradiance here is collected during cloudy days.""")
     
     with tab3:
         st.subheader("📈 Benin GHI Trends")
